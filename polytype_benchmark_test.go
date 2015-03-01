@@ -23,8 +23,8 @@ func createY() interface{} {
 }
 
 func init() {
-	AddType("x", createX)
-	AddType("y", createY)
+	Add("x", createX)
+	Add("y", createY)
 }
 
 func BenchmarkUnmarshal(b *testing.B) {
@@ -57,8 +57,8 @@ func BenchmarkUnmarshal(b *testing.B) {
 }
 `
 	var test struct {
-		Object Polytype
-		List   []Polytype
+		Object Type
+		List   []Type
 	}
 	for i := 0; i < b.N; i++ {
 		err := json.Unmarshal([]byte(data), &test)

@@ -23,12 +23,23 @@ func createB() interface{} {
 }
 
 func init() {
-	AddType("a", createA)
-	AddType("b", createB)
+	Add("a", createA)
+	Add("b", createB)
 }
 
-func ExamplePolytype_unmarshal() {
-	var test Polytype
+func TestNameDuplicated(t *testing.T) {
+	defer func() {
+		err := recover()
+		if err == nil {
+			t.Fatal("panic expected")
+		}
+	}()
+
+	Add("a", createB)
+}
+
+func ExampleType_unmarshal() {
+	var test Type
 	data := `
 {
   "type": "a",
@@ -44,9 +55,9 @@ func ExamplePolytype_unmarshal() {
 	// &polytype.a{A:"This is A"}
 }
 
-func ExamplePolytype_unmarshalStruct() {
+func ExampleType_unmarshalStruct() {
 	var test struct {
-		X Polytype
+		X Type
 	}
 	data := `
 {
@@ -64,8 +75,8 @@ func ExamplePolytype_unmarshalStruct() {
 	// &polytype.a{A:"This is A"}
 }
 
-func ExamplePolytype_unmarshalList() {
-	var test []Polytype
+func ExampleType_unmarshalList() {
+	var test []Type
 	data := `
 [
   {
@@ -92,9 +103,9 @@ func ExamplePolytype_unmarshalList() {
 	// &polytype.b{B:"This is B"}
 }
 
-func ExamplePolytype_unmarshalListInStruct() {
+func ExampleType_unmarshalListInStruct() {
 	var test struct {
-		X []Polytype
+		X []Type
 	}
 	data := `
 {
@@ -123,7 +134,7 @@ func ExamplePolytype_unmarshalListInStruct() {
 }
 
 func TestUnmarshalUnsupportedType(t *testing.T) {
-	var test Polytype
+	var test Type
 	data := `
 {
   "type": "c",
@@ -140,7 +151,7 @@ func TestUnmarshalUnsupportedType(t *testing.T) {
 }
 
 func TestUnmarshalEmptyType(t *testing.T) {
-	var test Polytype
+	var test Type
 	data := `
 {
   "type": "",
@@ -158,7 +169,7 @@ func TestUnmarshalEmptyType(t *testing.T) {
 
 func TestUnmarshalEmbeddedStruct(t *testing.T) {
 	type inner struct {
-		Polytype
+		Type
 	}
 	type iinner struct {
 		inner
@@ -192,8 +203,8 @@ func TestUnmarshalEmbeddedStruct(t *testing.T) {
 	}
 }
 
-func ExamplePolytype_marshal() {
-	var test Polytype
+func ExampleType_marshal() {
+	var test Type
 
 	test.Value = &a{"This is A"}
 	data, err := json.Marshal(&test)
@@ -206,10 +217,10 @@ func ExamplePolytype_marshal() {
 	// {"A":"This is A"}
 }
 
-func ExamplePolytype_marshalStruct() {
+func ExampleType_marshalStruct() {
 	var test struct {
-		X Polytype
-		Y Polytype
+		X Type
+		Y Type
 	}
 
 	test.X.Value = &a{"This is A"}
@@ -224,14 +235,14 @@ func ExamplePolytype_marshalStruct() {
 	// {"X":{"A":"This is A"},"Y":{"B":"This is B"}}
 }
 
-func ExamplePolytype_marshalListInStruct() {
+func ExampleType_marshalListInStruct() {
 	var test struct {
-		X []Polytype
+		X []Type
 	}
 
-	test.X = []Polytype{
-		Polytype{Value: &a{"This is A"}},
-		Polytype{Value: &b{"This is B"}},
+	test.X = []Type{
+		Type{Value: &a{"This is A"}},
+		Type{Value: &b{"This is B"}},
 	}
 	data, err := json.Marshal(&test)
 	if err != nil {
