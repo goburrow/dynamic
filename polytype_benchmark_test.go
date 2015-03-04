@@ -23,8 +23,8 @@ func createY() interface{} {
 }
 
 func init() {
-	Add("x", createX)
-	Add("y", createY)
+	Register("x", createX)
+	Register("y", createY)
 }
 
 func BenchmarkUnmarshal(b *testing.B) {

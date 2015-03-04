@@ -23,8 +23,8 @@ func createB() interface{} {
 }
 
 func init() {
-	Add("a", createA)
-	Add("b", createB)
+	Register("a", createA)
+	Register("b", createB)
 }
 
 func TestNameDuplicated(t *testing.T) {
@@ -35,7 +35,7 @@ func TestNameDuplicated(t *testing.T) {
 		}
 	}()
 
-	Add("a", createB)
+	Register("a", createB)
 }
 
 func ExampleType_unmarshal() {

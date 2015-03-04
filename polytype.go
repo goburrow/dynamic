@@ -11,9 +11,9 @@ import (
 // Supported types
 var types = make(map[string]func() interface{})
 
-// Add associates factory method for a type name.
+// Register associates factory method for a type name.
 // The factory method must return a pointer to a struct it's going to create.
-func Add(name string, f func() interface{}) {
+func Register(name string, f func() interface{}) {
 	if _, existed := types[name]; existed {
 		panic("polytype: type \"" + name + "\" has already been added")
 	}
