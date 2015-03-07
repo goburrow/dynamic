@@ -50,7 +50,7 @@ func ExampleType_unmarshal() {
 		fmt.Printf("%v\n", err)
 		return
 	}
-	fmt.Printf("%#v\n", test.Value)
+	fmt.Printf("%#v\n", test.Value())
 	// Output:
 	// &polytype.a{A:"This is A"}
 }
@@ -70,7 +70,7 @@ func ExampleType_unmarshalStruct() {
 		fmt.Printf("%v\n", err)
 		return
 	}
-	fmt.Printf("%#v\n", test.X.Value)
+	fmt.Printf("%#v\n", test.X.Value())
 	// Output:
 	// &polytype.a{A:"This is A"}
 }
@@ -96,7 +96,7 @@ func ExampleType_unmarshalList() {
 		return
 	}
 	for _, t := range test {
-		fmt.Printf("%#v\n", t.Value)
+		fmt.Printf("%#v\n", t.Value())
 	}
 	// Output:
 	// &polytype.a{A:"This is A"}
@@ -126,7 +126,7 @@ func ExampleType_unmarshalListInStruct() {
 		return
 	}
 	for _, t := range test.X {
-		fmt.Printf("%#v\n", t.Value)
+		fmt.Printf("%#v\n", t.Value())
 	}
 	// Output:
 	// &polytype.a{A:"This is A"}
@@ -195,10 +195,10 @@ func TestUnmarshalEmbeddedStruct(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, i := range test.X {
-		switch i.Value.(type) {
+		switch i.Value().(type) {
 		case *a:
 		default:
-			t.Fatalf("%#v is not *a", i.Value)
+			t.Fatalf("%#v is not *a", i.Value())
 		}
 	}
 }
@@ -206,7 +206,7 @@ func TestUnmarshalEmbeddedStruct(t *testing.T) {
 func ExampleType_marshal() {
 	var test Type
 
-	test.Value = &a{"This is A"}
+	test.SetValue(&a{"This is A"})
 	data, err := json.Marshal(&test)
 	if err != nil {
 		fmt.Printf("%v\n", err)
@@ -223,8 +223,8 @@ func ExampleType_marshalStruct() {
 		Y Type
 	}
 
-	test.X.Value = &a{"This is A"}
-	test.Y.Value = &b{"This is B"}
+	test.X.SetValue(&a{"This is A"})
+	test.Y.SetValue(&b{"This is B"})
 	data, err := json.Marshal(&test)
 	if err != nil {
 		fmt.Printf("%v\n", err)
@@ -241,9 +241,10 @@ func ExampleType_marshalListInStruct() {
 	}
 
 	test.X = []Type{
-		Type{Value: &a{"This is A"}},
-		Type{Value: &b{"This is B"}},
+		Type{&a{"This is A"}},
+		Type{&b{"This is B"}},
 	}
+
 	data, err := json.Marshal(&test)
 	if err != nil {
 		fmt.Printf("%v\n", err)

@@ -22,17 +22,14 @@ func Register(name string, f func() interface{}) {
 }
 
 // Type uses interface{} as the underlying data structure.
-type Type struct {
-	// Value is made public so the inner structs can be validated.
-	Value interface{}
-}
+type Type [1]interface{}
 
 var _ (json.Marshaler) = (*Type)(nil)
 var _ (json.Unmarshaler) = (*Type)(nil)
 
 // MarshalJSON marshals the polyType.Value
 func (t *Type) MarshalJSON() ([]byte, error) {
-	return json.Marshal(t.Value)
+	return json.Marshal(t[0])
 }
 
 // UnmarshalJSON first read Type property in JSON object, then unmarshal JSON
@@ -56,6 +53,16 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, value); err != nil {
 		return err
 	}
-	t.Value = value
+	t[0] = value
 	return nil
+}
+
+// Value returns the value marshalled.
+func (t *Type) Value() interface{} {
+	return t[0]
+}
+
+// SetValue set value to the type.
+func (t *Type) SetValue(v interface{}) {
+	t[0] = v
 }
