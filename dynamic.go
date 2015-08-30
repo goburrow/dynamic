@@ -1,7 +1,7 @@
 /*
-Package polytype allows unmarshal JSON property with multiple types.
+Package dynamic provides support for unmarshal dynamic JSON objects.
 */
-package polytype
+package dynamic
 
 import (
 	"encoding/json"
@@ -21,18 +21,19 @@ func Register(name string, f func() interface{}) {
 	types[name] = f
 }
 
-// Type uses interface{} as the underlying data structure.
+// Type represents objects that have their properties at top level along with
+// Type property.
 type Type [1]interface{}
 
 var _ (json.Marshaler) = (*Type)(nil)
 var _ (json.Unmarshaler) = (*Type)(nil)
 
-// MarshalJSON marshals the polyType.Value
+// MarshalJSON marshals the t.Value.
 func (t *Type) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t[0])
 }
 
-// UnmarshalJSON first read Type property in JSON object, then unmarshal JSON
+// UnmarshalJSON first reads Type property in JSON object, then unmarshals JSON
 // to the instance created by respective factory method.
 func (t *Type) UnmarshalJSON(data []byte) error {
 	var typed struct {
@@ -57,12 +58,12 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Value returns the value marshalled.
+// Value returns the value marshalled in t.
 func (t *Type) Value() interface{} {
 	return t[0]
 }
 
-// SetValue set value to the type.
+// SetValue sets value to t.
 func (t *Type) SetValue(v interface{}) {
 	t[0] = v
 }

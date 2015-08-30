@@ -1,4 +1,4 @@
-package polytype
+package dynamic
 
 import (
 	"encoding/json"
@@ -52,7 +52,7 @@ func ExampleType_unmarshal() {
 	}
 	fmt.Printf("%#v\n", test.Value())
 	// Output:
-	// &polytype.a{A:"This is A"}
+	// &dynamic.a{A:"This is A"}
 }
 
 func ExampleType_unmarshalStruct() {
@@ -72,7 +72,7 @@ func ExampleType_unmarshalStruct() {
 	}
 	fmt.Printf("%#v\n", test.X.Value())
 	// Output:
-	// &polytype.a{A:"This is A"}
+	// &dynamic.a{A:"This is A"}
 }
 
 func ExampleType_unmarshalList() {
@@ -99,8 +99,8 @@ func ExampleType_unmarshalList() {
 		fmt.Printf("%#v\n", t.Value())
 	}
 	// Output:
-	// &polytype.a{A:"This is A"}
-	// &polytype.b{B:"This is B"}
+	// &dynamic.a{A:"This is A"}
+	// &dynamic.b{B:"This is B"}
 }
 
 func ExampleType_unmarshalListInStruct() {
@@ -129,8 +129,8 @@ func ExampleType_unmarshalListInStruct() {
 		fmt.Printf("%#v\n", t.Value())
 	}
 	// Output:
-	// &polytype.a{A:"This is A"}
-	// &polytype.b{B:"This is B"}
+	// &dynamic.a{A:"This is A"}
+	// &dynamic.b{B:"This is B"}
 }
 
 func TestUnmarshalUnsupportedType(t *testing.T) {
