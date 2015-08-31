@@ -6,6 +6,11 @@ import (
 	"testing"
 )
 
+var _ (json.Marshaler) = (*Type)(nil)
+var _ (json.Unmarshaler) = (*Type)(nil)
+
+var _ (json.Unmarshaler) = (*Data)(nil)
+
 type a struct {
 	A string
 }

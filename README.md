@@ -24,28 +24,40 @@ type Info struct {
 }
 
 type Error struct {
-	Type string
+	Errors []string
+}
+
+type Status struct {
 	Code int
 }
 
 func init() {
 	dynamic.Register("info", func() interface{} { return &Info{} })
 	dynamic.Register("error", func() interface{} { return &Error{} })
+	dynamic.Register("status", func() interface{} { return &Status{} })
 }
 
 func main() {
 	json1 := `{"Type": "info", "Message": "hello"}`
-	json2 := `{"Type": "error", "Code": -213}`
+	json2 := `{"Type": "error", "Errors": ["unknown"]}`
+	json3 := `{"Type": "status", "Data": {"Code": 213}}`
+
 	var obj1, obj2 dynamic.Type
+	var obj3 dynamic.Data
 	json.Unmarshal([]byte(json1), &obj1)
 	json.Unmarshal([]byte(json2), &obj2)
-	fmt.Printf("1: %#v\n2: %#v\n", obj1.Value(), obj2.Value())
+	json.Unmarshal([]byte(json3), &obj3)
+
+	fmt.Printf("1: %#v\n", obj1.Value())
+	fmt.Printf("2: %#v\n", obj2.Value())
+	fmt.Printf("3: %#v\n", obj3.Value())
 }
 ```
 Output:
 ```
 1: &main.Info{Type:"info", Message:"hello"}
-2: &main.Error{Type:"error", Code:-213}
+2: &main.Error{Errors:[]string{"unknown"}}
+3: &main.Status{Code:213}
 ```
 
 ## TODO
