@@ -2,13 +2,11 @@ package dynamic
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 )
 
 var _ (json.Marshaler) = (*Type)(nil)
 var _ (json.Unmarshaler) = (*Type)(nil)
-
 var _ (json.Unmarshaler) = (*Data)(nil)
 
 type a struct {
@@ -41,101 +39,6 @@ func TestNameDuplicated(t *testing.T) {
 	}()
 
 	Register("a", createB)
-}
-
-func ExampleType_unmarshal() {
-	var test Type
-	data := `
-{
-  "type": "a",
-  "A": "This is A"
-}`
-
-	if err := json.Unmarshal([]byte(data), &test); err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	fmt.Printf("%#v\n", test.Value())
-	// Output:
-	// &dynamic.a{A:"This is A"}
-}
-
-func ExampleType_unmarshalStruct() {
-	var test struct {
-		X Type
-	}
-	data := `
-{
-  "X": {
-    "type": "a",
-    "A": "This is A"
-  }
-}`
-	if err := json.Unmarshal([]byte(data), &test); err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	fmt.Printf("%#v\n", test.X.Value())
-	// Output:
-	// &dynamic.a{A:"This is A"}
-}
-
-func ExampleType_unmarshalList() {
-	var test []Type
-	data := `
-[
-  {
-    "type": "a",
-    "A": "This is A",
-    "C": "This is C"
-  },
-  {
-    "Type": "b",
-    "A": "This is A",
-    "B": "This is B"
-  }
-]`
-
-	if err := json.Unmarshal([]byte(data), &test); err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	for _, t := range test {
-		fmt.Printf("%#v\n", t.Value())
-	}
-	// Output:
-	// &dynamic.a{A:"This is A"}
-	// &dynamic.b{B:"This is B"}
-}
-
-func ExampleType_unmarshalListInStruct() {
-	var test struct {
-		X []Type
-	}
-	data := `
-{
-  "X": [
-    {
-      "type": "a",
-      "A": "This is A"
-    },
-    {
-      "Type": "b",
-      "A": "This is A",
-      "B": "This is B"
-    }
-  ]
-}`
-	if err := json.Unmarshal([]byte(data), &test); err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	for _, t := range test.X {
-		fmt.Printf("%#v\n", t.Value())
-	}
-	// Output:
-	// &dynamic.a{A:"This is A"}
-	// &dynamic.b{B:"This is B"}
 }
 
 func TestUnmarshalUnsupportedType(t *testing.T) {
@@ -206,56 +109,4 @@ func TestUnmarshalEmbeddedStruct(t *testing.T) {
 			t.Fatalf("%#v is not *a", i.Value())
 		}
 	}
-}
-
-func ExampleType_marshal() {
-	var test Type
-
-	test.SetValue(&a{"This is A"})
-	data, err := json.Marshal(&test)
-	if err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	fmt.Printf("%s\n", data)
-	// Output:
-	// {"A":"This is A"}
-}
-
-func ExampleType_marshalStruct() {
-	var test struct {
-		X Type
-		Y Type
-	}
-
-	test.X.SetValue(&a{"This is A"})
-	test.Y.SetValue(&b{"This is B"})
-	data, err := json.Marshal(&test)
-	if err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	fmt.Printf("%s\n", data)
-	// Output:
-	// {"X":{"A":"This is A"},"Y":{"B":"This is B"}}
-}
-
-func ExampleType_marshalListInStruct() {
-	var test struct {
-		X []Type
-	}
-
-	test.X = []Type{
-		Type{&a{"This is A"}},
-		Type{&b{"This is B"}},
-	}
-
-	data, err := json.Marshal(&test)
-	if err != nil {
-		fmt.Printf("%v\n", err)
-		return
-	}
-	fmt.Printf("%s\n", data)
-	// Output:
-	// {"X":[{"A":"This is A"},{"B":"This is B"}]}
 }
